@@ -14,7 +14,7 @@ openjev-score --mode direct --device mps
 
 The model used for the acceptance run is `Qwen/Qwen3-0.6B` at immutable revision `c1899de289a04d12100db370d81485cdf75e47ca`.
 
-The change also adds `--device auto|cuda|mps|cpu`. `auto` selects CUDA when exactly one CUDA device is visible, otherwise MPS when available, otherwise CPU. Explicit device requests fail if unavailable. There is no silent runtime fallback after selection.
+The change also adds `--device auto|cuda|mps|cpu`. `auto` selects CUDA when exactly one CUDA device is visible. If CUDA is available with more than one visible device, selection fails and preserves the existing single-GPU contract; if CUDA is unavailable, `auto` selects MPS when available and otherwise CPU. Explicit device requests fail if unavailable. There is no silent runtime fallback after selection.
 
 MPS support is limited to direct scoring in this change. Serial prefix reuse, parallel shared-prefix scoring, and reranker scoring remain CUDA-only until their cache and numerical behavior are independently validated on MPS.
 
@@ -83,6 +83,7 @@ Planned source and test changes:
 - Modify `src/openjev_phase1/direct.py` to use backend-neutral synchronization.
 - Modify `src/openjev_phase1/cli.py` to expose and validate `--device`.
 - Create `tests/test_runtime.py` for pure device-policy and synchronization tests using fakes.
+- Create `tests/test_cli.py` for parser coverage and pre-load rejection of unsupported mode/device combinations.
 - Modify `tests/test_core.py` only where loader metadata or signatures require coverage.
 - Modify `README.md` with a concise Apple Silicon quick-start link.
 - Create `docs/MACOS.md` with the pinned Qwen3-0.6B command, limitations, expected download size, and evidence boundary.
