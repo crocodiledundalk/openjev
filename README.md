@@ -42,6 +42,20 @@ CUDA_VISIBLE_DEVICES=0 openjev-score \
   --output results.jsonl
 ```
 
+### Apple Silicon experiment
+
+The direct scorer can run through PyTorch MPS with the smaller pinned Qwen3-0.6B model. This is an experimental compatibility path, not the published 4B/RTX 3090 benchmark:
+
+```bash
+openjev-score --mode direct --device mps \
+  --model Qwen/Qwen3-0.6B \
+  --revision c1899de289a04d12100db370d81485cdf75e47ca \
+  --input examples/decisions.jsonl \
+  --output results-qwen3-06b-mps.jsonl
+```
+
+See [Apple Silicon](docs/MACOS.md) for installation, limitations, and verification.
+
 Each result contains typed option scores, timing, the exact model revision, and a prompt hash.
 
 If every row has the same exact state, switch to `--mode shared` to prefill it once and evaluate the criteria in parallel.
@@ -119,6 +133,7 @@ Returned probabilities are conditional on the supplied options. Calibrate and va
 
 ## Documentation
 
+- [Apple Silicon](docs/MACOS.md) — experimental direct scoring with pinned Qwen3-0.6B on MPS
 - [Results](docs/RESULTS.md) — quality, speed, perturbations, and claim boundaries
 - [Method](docs/METHOD.md) — frozen prompts, metrics, and timing scope
 - [Reproduce](docs/REPRODUCE.md) — exact environment, pinned commands, perturbations, and verification
